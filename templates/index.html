@@ -37,7 +37,15 @@
 <h3>To-do</h3>
 
 <ul id="incomplete-tasks">
-
+{% for task in incomplete %}
+<li id="{{task[0]}}">
+    <input type="checkbox" onclick="completeTask(this.parentElement)">
+    <label>{{task[1]}}</label>
+    <input type="text">
+    <button class="edit" onclick="editTask(this.parentElement)">Edit</button>
+    <button class="delete" onclick="deleteTask(this.parentElement)">Delete</button>
+</li>
+{% endfor %}
 </ul>
 
 </div>
@@ -47,7 +55,15 @@
 <h3>Completed Tasks</h3>
 
 <ul id="completed-tasks">
-
+{% for task in complete%}
+<li id="{{task[0]}}">
+    <input type="checkbox" disabled="disabled">
+    <label>{{task[1]}}</label>
+    <input type="text">
+    <button class="edit" onclick="editTask(this.parentElement)">Edit</button>
+    <button class="delete" onclick="deleteTask(this.parentElement)">Delete</button>
+</li>
+{% endfor %}
 </ul>
 
 </div>

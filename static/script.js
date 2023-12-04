@@ -1,34 +1,38 @@
 
-function addTask(){
+const PATH = "http://127.0.0.1:5000"
+
+async function addTask(){
     input = document.getElementById("new-task");
     text=input.value;
     //console.log(text);
     taskId = new Date().getMilliseconds().toString();
-    listItem = document.createElement("li");
-    listItem.setAttribute("id", taskId);
-
-    html ='<input type="checkbox" onclick="completeTask(this.parentElement)">'+
-    
-    '<label>'+text+'</label>'+
-    
-    '<input type="text">'+
-    
-    '<button class="edit" onclick="editTask(this.parentElement)">Edit</button>'+
-    
-    '<button class="delete" onclick="deleteTask(this.parentElement)">Delete</button>'+
-    
-    '</li>';
-    listItem.innerHTML=html;
-    document.getElementById("incomplete-tasks").appendChild(listItem);
-    document.getElementById("new-task").value="";
+    const rawResponse = await fetch(PATH+"/create", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({date: taskId, text: text})
+  });
+  const content = await rawResponse.json();
+  window.location.reload()
 }
 
-function editTask(element){
+async function editTask(element){
     listItem = element;
     if(listItem.className=="editMode"){
-        input = listItem.getElementsByTagName("input")[1].value;
-        listItem.getElementsByTagName("label")[0].innerText=input;
-        listItem.className="";
+        text = listItem.getElementsByTagName("input")[1].value;
+        date = element.id
+    const rawResponse = await fetch(PATH+"/edit/"+date, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({text: text})
+  });
+  const content = await rawResponse.json();
+  window.location.reload()
     }
     else{
         listItem.className="editMode";
@@ -38,22 +42,19 @@ function editTask(element){
     }
 }
 
-function deleteTask(element){
+async function deleteTask(element){
     //console.log(element);
-    listItem = document.getElementById(element.id);
-    listItem.remove();
+    const response = await fetch(PATH+"/delete/"+element.id)
+    window.location.reload()
 }
 
-function completeTask(element){
-    completedTask = element;
-    element.remove();
-    checkbox = completedTask.getElementsByTagName("input")[0];
-    checkbox.disabled=true;
-    document.getElementById("completed-tasks").appendChild(element);
+async function completeTask(element){
+    const response = await fetch(PATH+"/complete/"+element.id)
+    window.location.reload()
 }
 
-function clearAll(){
-    document.getElementById("incomplete-tasks").innerHTML="";
-    document.getElementById("completed-tasks").innerHTML="";
+async function clearAll(){
+    const response = await fetch(PATH+"/clear")
+    window.location.reload()
 }
 
