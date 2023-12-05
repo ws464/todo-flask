@@ -1,5 +1,5 @@
 import pickle
-from classes import task
+from flask import jsonify
 
 INCOMPLETE_PATH = "incomplete_tasks.pickle"
 COMPLETE_PATH = "complete_tasks.pickle"
@@ -11,7 +11,8 @@ def getAllIncomplete():
     except (OSError, IOError) as e:
         tasks={}
         pickle.dump(tasks, open(INCOMPLETE_PATH, "wb"))
-    return tasks 
+    taskObjects = list(map(lambda t: {'date': t, 'text': tasks[t]}, tasks.keys()));
+    return jsonify()
 
 def getAllComplete():
     tasks={}
