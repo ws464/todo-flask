@@ -122,7 +122,7 @@ async function updateTasks(){
 
   
   document.getElementById('incomplete-tasks').innerHTML = incompleteList.map(t => ` 
-  <li id="${t[0]}" draggable>
+  <li id="${t[0]}" draggable="true">
   <input type="checkbox" onclick="completeTask(this.parentElement)">
   <label>${t[1]}</label>
   <input type="text">
@@ -130,4 +130,43 @@ async function updateTasks(){
   <button class="delete" onclick="deleteTask(this.parentElement)">Delete</button>
 </li> 
   `).join(" ");
+
+  dropArea = document.getElementById('completed-tasks');
+
+  for(dragElement of document.getElementById('incomplete-tasks').getElementsByTagName('li')){
+    dragElement.addEventListener('dragstart', function (event) {
+      //console.log('started dragging');
+      event.dataTransfer.setData('text/plain', dragElement.id);
+      document.getElementById('completed-tasks').classList.add('droppable');
+    });
+    dragElement.addEventListener('dragend', function (event) {
+      dropArea.classList.remove('droppable');   
+    });
+  }
+
+  dropArea.addEventListener('dragenter', function (event) {
+    event.preventDefault();
+    dropArea.classList.remove('droppable');
+    dropArea.classList.add('highlight');
+  });
+
+  dropArea.addEventListener('dragleave', function () {
+    dropArea.classList.remove('highlight');
+    dropArea.classList.add('droppable');
+  });
+
+  dropArea.addEventListener('dragover', function (event) {
+    event.preventDefault();
+  });
+
+  dropArea.addEventListener('drop', async function (event) {
+    console.log('dropped');
+    event.preventDefault();
+    dropArea.classList.remove('highlight');
+    console.log('updating!')
+    await completeTask(event.dataTransfer.getData('text/plain'));
+    await updateTasks();
+    return true;
+  });
+
 }
