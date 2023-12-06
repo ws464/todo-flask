@@ -54,6 +54,11 @@ async function completeTask(element){
     await updateTasks();
 }
 
+async function completeTaskById(id){
+  const response = await fetch(PATH+"/complete/"+id)
+  await updateTasks();
+}
+
 async function clearAll(){
     const response = await fetch(PATH+"/clear")
     await updateTasks();
@@ -164,7 +169,9 @@ async function updateTasks(){
     event.preventDefault();
     dropArea.classList.remove('highlight');
     console.log('updating!')
-    await completeTask(event.dataTransfer.getData('text/plain'));
+    id = event.dataTransfer.getData('text/plain');
+    console.log(id);
+    await completeTaskById(id);
     await updateTasks();
     return true;
   });
