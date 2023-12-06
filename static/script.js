@@ -1,11 +1,12 @@
 
 const PATH = "http://127.0.0.1:5000"
+const cookieName = "darkMode=";
 
 async function addTask(){
     input = document.getElementById("new-task");
     text=input.value;
     //console.log(text);
-    taskId = new Date().getMilliseconds().toString();
+    taskId = new Date().getTime().toString();
     const rawResponse = await fetch(PATH+"/create", {
     method: 'POST',
     headers: {
@@ -15,7 +16,7 @@ async function addTask(){
     body: JSON.stringify({date: taskId, text: text})
   });
   const content = await rawResponse.json();
-  window.location.reload()
+  await updateTasks();
 }
 
 async function editTask(element){
@@ -32,7 +33,7 @@ async function editTask(element){
     body: JSON.stringify({text: text})
   });
   const content = await rawResponse.json();
-  window.location.reload()
+  await updateTasks();
     }
     else{
         listItem.className="editMode";
@@ -45,16 +46,88 @@ async function editTask(element){
 async function deleteTask(element){
     //console.log(element);
     const response = await fetch(PATH+"/delete/"+element.id)
-    window.location.reload()
+    await updateTasks();
 }
 
 async function completeTask(element){
     const response = await fetch(PATH+"/complete/"+element.id)
-    window.location.reload()
+    await updateTasks();
 }
 
 async function clearAll(){
     const response = await fetch(PATH+"/clear")
-    window.location.reload()
+    await updateTasks();
 }
 
+function toggleDarkMode(){
+    cookieValue = "light"
+    cookie = decodeURIComponent(document.cookie);
+    cookieArray = cookie.split(";");
+    for(c of cookieArray){
+      c = c.trim();
+      if(c.indexOf(cookieName)==0){
+        cookieValue=cookie.substring(cookieName.length, cookie.length);
+        cookieValue=((cookieValue=="light")?"dark":"light");
+        //console.log(cookieValue)
+        break;
+      }
+    }
+    document.cookie=cookieName+cookieValue+";";
+    loadDarkMode();
+}
+
+function loadDarkMode(){
+  cookie = decodeURIComponent(document.cookie);
+  //console.log(cookie);
+  cookieArray = cookie.split(";");
+  cookieValue = "light"
+  for(c of cookieArray){
+    c = c.trim();
+    if(c.indexOf(cookieName)==0){
+      cookieValue=cookie.substring(cookieName.length, cookie.length);
+      break;
+    }
+}
+//console.log(cookieValue)
+if(cookieValue=="dark"){
+  document.body.className="dark"
+}
+else{
+  document.body.className="";
+}
+}
+
+async function loadPage(){
+  await updateTasks();
+  loadDarkMode();
+}
+
+async function updateTasks(){
+  const completedTasksReq = await fetch(PATH+"/completed-tasks");
+  const incompleteTasksReq = await fetch(PATH+"/incomplete-tasks");
+  completedTasks = await completedTasksReq.json()
+  incompleteTasks =  await incompleteTasksReq.json()  
+  completedList = completedTasks['data']
+  incompleteList = incompleteTasks['data']
+  
+  document.getElementById('completed-tasks').innerHTML = completedList.map(t => ` 
+  <li id="${t[0]}">
+  <input type="checkbox" checked disabled>
+  <label>${t[1]}</label>
+  <input type="text">
+  <button class="edit" onclick="editTask(this.parentElement)">Edit</button>
+  <button class="delete" onclick="deleteTask(this.parentElement)">Delete</button>
+</li> 
+  `).join(" ");
+
+  
+  document.getElementById('incomplete-tasks').innerHTML = incompleteList.map(t => ` 
+  <li id="${t[0]}" draggable>
+  <input type="checkbox" onclick="completeTask(this.parentElement)">
+  <label>${t[1]}</label>
+  <input type="text">
+  <button class="edit" onclick="editTask(this.parentElement)">Edit</button>
+  <button class="delete" onclick="deleteTask(this.parentElement)">Delete</button>
+</li> 
+  `).join(" ");
+}

@@ -4,14 +4,6 @@ import json
 
 app = Flask(__name__)
 
-# @app.route("/completed-tasks", methods=["GET"])
-# def getAll():
-#    return fun.getAllComplete()
-
-# @app.route("/incomplete-tasks", methods=["GET"])
-# def getAll():
-#    return fun.getAllIncomplete()
-
 @app.route("/edit/<date>", methods=["POST"])
 def edit(date):
     data = request.get_json()
@@ -37,9 +29,25 @@ def create():
 def clearAll():
    return fun.clearAll()
 
+@app.route("/completed-tasks", methods=["GET"])
+def getAllCompleted():
+   return fun.getAllComplete()
+
+@app.route("/incomplete-tasks", methods=["GET"])
+def getAllIncomplete():
+   return fun.getAllIncomplete()
+
 @app.route("/")
 def home():
-    return render_template("index.html", incomplete=fun.getAllIncomplete().items(), complete=fun.getAllComplete().items())
+    incomplete = fun.getAllIncomplete()
+    complete=fun.getAllComplete()
+    # print(type(incomplete))
+    # print(type(complete))
+    # print(incomplete)
+    # print(complete)
+    #Can't return json.... will have to reformat this at some point.....
+    return render_template("index.html", incomplete=incomplete['data'], complete=complete['data'])
+    #return "hello world!"
 
 
 app.run(debug=True)

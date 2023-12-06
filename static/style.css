@@ -21,7 +21,28 @@ body {
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     
     }
-    
+
+    body.dark {
+        background: #000000;
+        
+        color: #9cf94b;
+        
+        font-family: Lato, sans-serif;
+        
+        background: #060606;
+        
+        /* fallback for old browsers */
+        
+        background: -webkit-linear-gradient(to right, #020202, #3b3b3b);
+        
+        /* Chrome 10-25, Safari 5.1-6 */
+        
+        background: linear-gradient(to right, #020202, #3b3b3b);
+        
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        
+        }
+
     #title {
     
     margin-top: 5px;
@@ -101,6 +122,11 @@ body {
     border-radius: 10%;
     
     }
+
+    body.dark button{
+        background-color: #9cf94b;
+        color: #000000;
+    }
     
     button:hover {
     
@@ -118,13 +144,13 @@ body {
     
     label[for='new-task'] {
     
-    color: #333;
+    /*color: #333;*/
     
     font-weight: 700;
     
     font-size: 15px;
     
-    border-bottom: 2px solid #333;
+    /*border-bottom: 2px solid #333;*/
     
     padding: 30px 0 10px;
     
@@ -160,7 +186,7 @@ body {
     
     input[type="text"]:focus {
     
-    color: #333;
+    /* color: #333; */
     
     }
     
@@ -190,8 +216,12 @@ body {
     
     padding: 20px 0;
     
-    border-bottom: 1px solid #eee;
+    border: 5px solid #eee;
     
+    }
+
+    body.dark li{
+        border: 5px solid #9cf94b;
     }
     
     li>input[type="checkbox"] {
@@ -230,11 +260,15 @@ body {
     
     /* Completed */
     
+    #completed-tasks {
+        min-height: 100px;
+    }
+
     #completed-tasks label {
     
     text-decoration: line-through;
     
-    color: #888;
+    /* color: #888; */
     
     }
     
@@ -267,3 +301,27 @@ body {
     text-align: center;
     
     }
+
+    .draggable {
+        cursor: grab;
+    }
+
+    .droppable {
+
+    }
+
+    @keyframes glow {
+        0% {
+          box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.7);
+        }
+        50% {
+          box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.9);
+        }
+        100% {
+          box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.7);
+        }
+      }
+      
+      .movingTask {
+        animation: glow 2s infinite; /* Apply the glow animation with a 2-second duration and infinite repetition */
+      }

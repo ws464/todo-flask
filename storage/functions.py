@@ -11,8 +11,8 @@ def getAllIncomplete():
     except (OSError, IOError) as e:
         tasks={}
         pickle.dump(tasks, open(INCOMPLETE_PATH, "wb"))
-    taskObjects = list(map(lambda t: {'date': t, 'text': tasks[t]}, tasks.keys()));
-    return jsonify()
+        print(list(tasks.items()))
+    return {'data': [(k,v) for k,v in tasks.items()]}
 
 def getAllComplete():
     tasks={}
@@ -21,7 +21,8 @@ def getAllComplete():
     except (OSError, IOError) as e:
         tasks={}
         pickle.dump(tasks, open(COMPLETE_PATH, "wb"))
-    return tasks  
+        print(list(tasks.items()))
+    return {'data': [(k,v) for k,v in tasks.items()]}
 
 def addTask(date, text):
     tasks={}
